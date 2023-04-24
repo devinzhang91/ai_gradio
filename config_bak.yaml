@@ -1,0 +1,35 @@
+gradio:
+  server_name: 0.0.0.0
+  server_port: 7860
+
+
+openai:
+  type    : azure
+  base    : https://bgioaistudio.openai.azure.com/
+  version : 2023-03-15-preview
+  key     : 
+  playground_models  :
+    - 
+  chatbot_models : 
+    - 
+
+google:
+  key     : 
+  cx      : 
+  url     : https://www.googleapis.com/customsearch/v1/
+  
+bing:
+  key     : 
+  endpoint: https://api.bing.microsoft.com/v7.0/search
+
+azure_speech:
+  region  : 
+  key     : 
+  endpoint: https://eastasia.api.cognitive.microsoft.com/sts/v1.0/issuetoken
+  voice   : 
+    - zh-CN-XiaoxiaoNeural
+    - zh-CN-YunxiNeural
+    - zh-CN-XiaohanNeural
+    - zh-CN-YunyeNeural
+    - zh-CN-XiaomoNeural
+  
