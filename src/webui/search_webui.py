@@ -1,10 +1,8 @@
 from src.webui.webui_surface import WebUISurface
 from loguru import logger
 import gradio as gr
-from scholarly import scholarly
-from scholarly import ProxyGenerator
-import src.tools.google_search as google_search
-import src.tools.bing_search as bing_search
+from src.tools.google_search import GoogleSearchEngine
+from src.tools.bing_search import BingSearchEngine
 
 class SearchWebUI(WebUISurface):
     def __init__(self):
@@ -12,15 +10,15 @@ class SearchWebUI(WebUISurface):
 
     def search_google(keyword):
         try:
-            json = google_search.call_google_search(keyword)
-            return google_search.parse_google_search_info(json)
+            json = GoogleSearchEngine.call_google_search(keyword)
+            return GoogleSearchEngine.parse_google_search_info(json)
         except Exception as e:
             raise gr.Error("Exception: " + str(e))
         
     def search_bing(keyword):
         try:
-            json = bing_search.call_bing_search(keyword)
-            return bing_search.parse_bing_search_result(json)
+            json = BingSearchEngine.call_bing_search(keyword)
+            return BingSearchEngine.parse_bing_search_result(json)
         except Exception as e:
             raise gr.Error("Exception: " + str(e))
 

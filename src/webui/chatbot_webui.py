@@ -1,10 +1,8 @@
 from src.webui.webui_surface import WebUISurface
 from loguru import logger
 import gradio as gr
-import json
-from src.tools.openai_gpt import OpenAiConf
-import src.tools.openai_gpt as openai_gpt
-import src.tools.bing_search as bing_search
+from src.tools.openai_gpt import OpenAiEngine
+from src.tools.bing_search import BingSearchEngine
 
 class ChatBotWebUI(WebUISurface):
 
@@ -12,31 +10,30 @@ class ChatBotWebUI(WebUISurface):
         pass
 
     def chatbot_openai(history,
-                    engine: str = OpenAiConf.CHATBOT_MODELS_LIST[0],
+                    engine: str = OpenAiEngine.CHATBOT_MODELS_LIST[0],
                     temperature: float = 0.2,
                     top_p: float = 0.8,
                     max_tokens: int = 4000,
                     is_search = True, 
                     is_correlation = True,
                     max_search_results: int = 5):
-                    
-                    try:
-                        tmp_history = history
-                        if(is_correlation == False):
-                            tmp_history = [history[-1]]
-                        if(is_search == False):
-                             return openai_gpt.call_openai_chat(tmp_history, engine, temperature, top_p, max_tokens)
-                        else:
-                            # step1:call_openai_chat_token
-                            # step2:call_bing_search + parse_bing_search_result
-                            # step3:call_openai_chat_with_search
-                            new_token = openai_gpt.call_openai_chat_token(tmp_history, engine, max_tokens)
-                            json = bing_search.call_bing_search(new_token)
-                            bing_search_result = bing_search.parse_bing_search_result(json)
-                            return openai_gpt.call_openai_chat_with_search2(tmp_history, bing_search_result, engine, temperature, top_p, max_tokens, max_search_results )
-                    except Exception as e:
-                        # raise gr.Error("Exception: " + str(e))
-                        return "[ERROR]::Exception: " + str(e)
+        try:
+            tmp_history = history
+            if(is_correlation == False):
+                tmp_history = [history[-1]]
+            if(is_search == False):
+                    return OpenAiEngine.call_openai_chat(tmp_history, engine, temperature, top_p, max_tokens)
+            else:
+                # step1:call_openai_chat_token
+                # step2:call_bing_search + parse_bing_search_result
+                # step3:call_openai_chat_with_search
+                new_token = OpenAiEngine.call_openai_chat_token(tmp_history, engine, max_tokens)
+                json = BingSearchEngine.call_bing_search(new_token)
+                bing_search_result = BingSearchEngine.parse_bing_search_result(json)
+                return OpenAiEngine.call_openai_chat_with_search(tmp_history, bing_search_result, engine, temperature, top_p, max_tokens, max_search_results )
+        except Exception as e:
+            # raise gr.Error("Exception: " + str(e))
+            return "[ERROR]::Exception: " + str(e)
             
 
     def get_gradio_block():
@@ -54,9 +51,9 @@ class ChatBotWebUI(WebUISurface):
                                         open=False):
                             with gr.Column():
                                 engine = gr.Dropdown(
-                                    OpenAiConf.CHATBOT_MODELS_LIST, 
+                                    OpenAiEngine.CHATBOT_MODELS_LIST, 
                                     label="models", 
-                                    value = OpenAiConf.CHATBOT_MODELS_LIST[1],
+                                    value = OpenAiEngine.CHATBOT_MODELS_LIST[1],
                                 )
                                 temperature = gr.Slider(
                                     minimum=0,

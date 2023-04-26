@@ -3,8 +3,8 @@ from loguru import logger
 import gradio as gr
 import json
 import src.tools.openai_gpt as openai_gpt
-import src.tools.bing_search as bing_search
-from src.tools.openai_gpt import OpenAiConf
+from src.tools.bing_search import BingSearchEngine
+from src.tools.openai_gpt import OpenAiEngine
 
 class PlaygroundWebUI(WebUISurface):
 
@@ -12,7 +12,7 @@ class PlaygroundWebUI(WebUISurface):
         pass
 
     def playground_openai(prompt,
-                    engine: str = OpenAiConf.PLAYGROUND_MODELS_LIST[0],
+                    engine: str = OpenAiEngine.PLAYGROUND_MODELS_LIST[0],
                     temperature: float = 0.15,
                     top_p: float = 0.5,
                     max_tokens: int = 2000):
@@ -36,9 +36,9 @@ class PlaygroundWebUI(WebUISurface):
                             with gr.Row():
                                 with gr.Column():
                                     engine = gr.Dropdown(
-                                        OpenAiConf.PLAYGROUND_MODELS_LIST, 
+                                        OpenAiEngine.PLAYGROUND_MODELS_LIST, 
                                         label="models", 
-                                        value = OpenAiConf.PLAYGROUND_MODELS_LIST[0],
+                                        value = OpenAiEngine.PLAYGROUND_MODELS_LIST[0],
                                     )
                                     temperature = gr.Slider(
                                         minimum=0,
