@@ -38,63 +38,64 @@ class ChatBotWebUI(WebUISurface):
 
     def get_gradio_block():
         with gr.Blocks() as openai_chatbot_block:
-            with gr.Column():
-                chatbot = gr.Chatbot().style(height="100%")
-                with gr.Row():
-                    with gr.Column(scale=5):
-                        message = gr.Textbox()
-                    with gr.Column(scale=1):
+            with gr.Row():
+                with gr.Column(scale=3):
+                    chatbot = gr.Chatbot().style(height=768)
+                    with gr.Row():
+                        with gr.Column(scale=8):
+                            message = gr.Textbox(show_label=False,)
                         chatbot_submit_button = gr.Button(value="Submit")
                         chatbot_clear_button = gr.Button( value="Clear")
-                    with gr.Column(scale=2):
-                        with gr.Accordion("Prmameters", 
-                                        open=False):
-                            with gr.Column():
-                                engine = gr.Dropdown(
-                                    OpenAiEngine.CHATBOT_MODELS_LIST, 
-                                    label="models", 
-                                    value = OpenAiEngine.CHATBOT_MODELS_LIST[1],
-                                )
-                                temperature = gr.Slider(
-                                    minimum=0,
-                                    maximum=1.0,
-                                    value=0.05,
-                                    step=0.01,
-                                    interactive=True,
-                                    label="Temperature",
-                                )
-                                top_p = gr.Slider(
-                                    minimum=0,
-                                    maximum=1.0,
-                                    value=0.2,
-                                    step=0.05,
-                                    interactive=True,
-                                    label="Top p",
-                                )
-                                max_tokens = gr.Slider(
+
+                with gr.Column(scale=1):
+                    with gr.Accordion("Prmameters", 
+                                    open=False):
+                        with gr.Column():
+                            engine = gr.Dropdown(
+                                OpenAiEngine.CHATBOT_MODELS_LIST, 
+                                label="models", 
+                                value = OpenAiEngine.CHATBOT_MODELS_LIST[1],
+                            )
+                            temperature = gr.Slider(
+                                minimum=0,
+                                maximum=1.0,
+                                value=0.05,
+                                step=0.01,
+                                interactive=True,
+                                label="Temperature",
+                            )
+                            top_p = gr.Slider(
+                                minimum=0,
+                                maximum=1.0,
+                                value=0.2,
+                                step=0.05,
+                                interactive=True,
+                                label="Top p",
+                            )
+                            max_tokens = gr.Slider(
+                                minimum=1,
+                                maximum=4000,
+                                value=800,
+                                step=1,
+                                interactive=True,
+                                label="Maximum Tokens",
+                            )
+                            
+                            with gr.Row():
+                                is_search = gr.Checkbox(label="search", 
+                                                        info="Search in network?",
+                                                        value=True)
+                                max_search_results = gr.Slider(
                                     minimum=1,
-                                    maximum=4000,
-                                    value=800,
+                                    maximum=10,
+                                    value=5,
                                     step=1,
                                     interactive=True,
-                                    label="Maximum Tokens",
+                                    label="Maximum search results",
                                 )
-
-                                with gr.Row():
-                                    is_search = gr.Checkbox(label="search", 
-                                                            info="Search in network?",
+                                is_correlation = gr.Checkbox(label="correlation",  
+                                                            info="Correlate the dialogue?", 
                                                             value=True)
-                                    max_search_results = gr.Slider(
-                                        minimum=1,
-                                        maximum=10,
-                                        value=5,
-                                        step=1,
-                                        interactive=True,
-                                        label="Maximum search results",
-                                    )
-                                    is_correlation = gr.Checkbox(label="correlation",  
-                                                                info="Correlate the dialogue?", 
-                                                                value=True)
 
                             
 
@@ -102,7 +103,10 @@ class ChatBotWebUI(WebUISurface):
                  history, 
                  message_to_submit):
             message_to_submit.append({"role": "user", "content": f"{user_message}"})
-            return "", history + [[user_message, None]]
+            history.append([user_message, None])
+            for h in history[:-1]:
+                h[1] = h[1].replace("\n", "<br>")   # fix gradio chatbot bug
+            return "", history
 
 
         def bot(history, 
