@@ -2,5 +2,6 @@ src/__pycache__/
 src/routers/__pycache__/
 src/tools/__pycache__/
 src/webui/__pycache__/
+test/__pycache__/
 config.yaml
 .vscode/settings.json

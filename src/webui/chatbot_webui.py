@@ -48,8 +48,8 @@ class ChatBotWebUI(WebUISurface):
                         chatbot_clear_button = gr.Button( value="Clear")
 
                 with gr.Column(scale=1):
-                    with gr.Accordion("Prmameters", 
-                                    open=False):
+                    with gr.Accordion("Prmameters",
+                                      open=True):
                         with gr.Column():
                             engine = gr.Dropdown(
                                 OpenAiEngine.CHATBOT_MODELS_LIST, 

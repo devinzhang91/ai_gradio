@@ -1,8 +1,6 @@
 from src.webui.webui_surface import WebUISurface
 from loguru import logger
 import gradio as gr
-import json
-import src.tools.openai_gpt as openai_gpt
 from src.tools.bing_search import BingSearchEngine
 from src.tools.openai_gpt import OpenAiEngine
 
@@ -17,7 +15,7 @@ class PlaygroundWebUI(WebUISurface):
                     top_p: float = 0.5,
                     max_tokens: int = 2000):
                     try:
-                        return openai_gpt.call_openai(prompt, engine, temperature, top_p, max_tokens)
+                        return OpenAiEngine.call_openai(prompt, engine, temperature, top_p, max_tokens)
                         # return openai_gpt.call_openai_token(prompt, engine, max_tokens)
                     except Exception as e:
                         raise gr.Error("Exception: " + str(e))
