@@ -25,8 +25,8 @@ class OpenAiGPTRouter():
         is_search: bool = False
         device_id: int = 0
 
-    @router.post("/call_openai/")
-    async def fastapi_bing_search(item: OpenAICallItem):
+    @router.post("/call_openai_chat/")
+    async def fastapi_call_openai_chat(item: OpenAICallItem):
         OpenAiGPTRouter.history.append({'role': 'user', 'content': item.prompt})
         tmp_history = OpenAiGPTRouter.history
         if(item.is_correlation == False):
@@ -43,10 +43,13 @@ class OpenAiGPTRouter():
             bing_search_result = BingSearchEngine.parse_bing_search_result(json)
             return OpenAiEngine.call_openai_chat_with_search(tmp_history, bing_search_result, item.engine, item.temperature, item.top_p, item.max_tokens, item.max_search_results )
 
-        
+    @router.post("/clear_chat_history/")
+    async def fastapi_clear_chat_history():
+        # clear chat history
+        OpenAiGPTRouter.history.clear()
 
-    @router.post("/call_openai_chat/")
-    async def fastapi_bing_search(keyword: str):
-        json = BingSearchEngine.call_bing_search(keyword)
-        return BingSearchEngine.parse_bing_search_result(json)
+    @router.post("/call_openai/")
+    async def fastapi_call_openai(item: OpenAICallItem):
+        return OpenAiEngine.call_openai(item.prompt, item.engine, item.temperature, item.top_p, item.max_tokens)
+
         

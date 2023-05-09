@@ -60,7 +60,8 @@ class AuzerSpeechEngine:
             raise e
 
     def synthesize_to_output(text_to_speech : str,
-                            filename : str  = None):
+                            filename : str  = None,
+                            voice : str = SPEECH_VOICE_LIST[1]):
         try:
             # This example requires environment variables named "SPEECH_KEY" and "SPEECH_REGION"
             speech_config = speechsdk.SpeechConfig(subscription=AuzerSpeechEngine.SPEECH_KEY, 
@@ -72,7 +73,7 @@ class AuzerSpeechEngine:
 
 
             # The language of the voice that speaks.
-            speech_config.speech_synthesis_voice_name = AuzerSpeechEngine.SPEECH_VOICE_LIST[1]
+            speech_config.speech_synthesis_voice_name = voice
 
             speech_synthesizer = speechsdk.SpeechSynthesizer(speech_config=speech_config, audio_config=audio_config)
 

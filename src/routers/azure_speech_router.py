@@ -2,6 +2,7 @@ from src.tools.azure_speech import AuzerSpeechEngine
 from loguru import logger
 import tempfile
 import os
+import io
 # fastapi router
 from fastapi import APIRouter, UploadFile, Request
 from fastapi.responses import StreamingResponse
@@ -12,6 +13,10 @@ import soundfile as sf
 
 class AzureSpeechRouter():
     router = APIRouter()
+
+    class TtsItem(BaseModel):
+        text: str
+        voice: str = "zh-CN-XiaoxiaoNeural"
 
     def __init__(self) -> None:
         pass
@@ -31,11 +36,11 @@ class AzureSpeechRouter():
         return {"asr": result}
         
     @router.post("/call_tts/")
-    async def fastapi_call_tts(text: str):
+    async def fastapi_call_tts(item: TtsItem):
         with tempfile.NamedTemporaryFile(suffix='.wav', delete=False) as tmpfile :
             try:
                 tmpfile.close()  # 文件关闭，但保留文件，这里只获取了tmpfile的文件名作为参数
-                AuzerSpeechEngine.synthesize_to_output(text, tmpfile.name)
+                AuzerSpeechEngine.synthesize_to_output(item.text, tmpfile.name)
                 return FileResponse(
                     tmpfile.name,
                     filename="tts_output.wav",
@@ -67,12 +72,13 @@ class AzureSpeechRouter():
 
     #tts stream download
     @router.post("/call_tts_stream/")
-    async def fastapi_call_tts_stream(text: str):
+    async def fastapi_call_tts_stream(item: TtsItem):
         with tempfile.NamedTemporaryFile(suffix='.wav', delete=False) as tmpfile :
             try:
                 tmpfile.close()  # 文件关闭，但保留文件，这里只获取了tmpfile的文件名作为参数
-                AuzerSpeechEngine.synthesize_to_output(text, tmpfile.name)
+                AuzerSpeechEngine.synthesize_to_output(item.text, tmpfile.name)
                 data, sr = sf.read(tmpfile.name, dtype='int16')
-                return StreamingResponse(data, media_type="audio/wav", background=BackgroundTask(lambda: os.remove(tmpfile.name)))
+                data_bytes = data.tobytes()  # 将data数组转换为字节流
+                return StreamingResponse(io.BytesIO(data_bytes), media_type="audio/wav", background=BackgroundTask(lambda: os.remove(tmpfile.name)))
             except Exception as e:
                 return {"tts stream": "error: "+ str(e)}

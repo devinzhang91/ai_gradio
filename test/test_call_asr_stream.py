@@ -9,11 +9,10 @@ with open('../config.yaml',mode='r') as f:
     server_name = gradio_config['server_name']
     server_port = gradio_config['server_port']
 
-url = "http://" + server_name + ":" + str(server_port) + "/call_asr_stream/"   # 替换为您要发送文件的目标URL
-file_path = '/home/devin/Downloads/bulecat.wav'  # 替换为您要发送的wav文件的路径
-
-print(url)
-print(file_path)
+# 替换为您要发送文件的目标URL
+url = "http://" + server_name + ":" + str(server_port) + "/call_asr_stream/"
+# 替换为您要发送的wav文件的路径
+file_path = './file/bulecat.wav'
 
 # 定义一个生成器函数，用于以4096字节的块读取文件
 def file_stream(file_path, chunk_size=4096):
