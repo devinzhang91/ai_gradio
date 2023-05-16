@@ -3,18 +3,18 @@ from loguru import logger
 import tempfile
 import os
 import io
+import soundfile as sf
 # fastapi router
 from fastapi import APIRouter, UploadFile, Request
 from fastapi.responses import StreamingResponse
 from starlette.responses import FileResponse
 from starlette.background import BackgroundTask
 from pydantic import BaseModel
-import soundfile as sf
 
 class AzureSpeechRouter():
     router = APIRouter()
 
-    class TtsItem(BaseModel):
+    class TTSCallItem(BaseModel):
         text: str
         voice: str = "zh-CN-XiaoxiaoNeural"
 
@@ -33,10 +33,10 @@ class AzureSpeechRouter():
                 return {"asr": "error: " + str(e)}
             finally:
                 tmpfile.close()  # 文件关闭即删除
-        return {"asr": result}
+        return result
         
     @router.post("/call_tts/")
-    async def fastapi_call_tts(item: TtsItem):
+    async def fastapi_call_tts(item: TTSCallItem):
         with tempfile.NamedTemporaryFile(suffix='.wav', delete=False) as tmpfile :
             try:
                 tmpfile.close()  # 文件关闭，但保留文件，这里只获取了tmpfile的文件名作为参数
@@ -68,11 +68,11 @@ class AzureSpeechRouter():
                 return {"asr stream": "error: " + str(e)}
             finally:
                 tmpfile.close()  # 文件关闭即删除
-        return {"asr stream": result}
+        return  result
 
     #tts stream download
     @router.post("/call_tts_stream/")
-    async def fastapi_call_tts_stream(item: TtsItem):
+    async def fastapi_call_tts_stream(item: TTSCallItem):
         with tempfile.NamedTemporaryFile(suffix='.wav', delete=False) as tmpfile :
             try:
                 tmpfile.close()  # 文件关闭，但保留文件，这里只获取了tmpfile的文件名作为参数

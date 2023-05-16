@@ -23,6 +23,7 @@ class OpenAiGPTRouter():
         max_tokens: int = 2000
         is_correlation: bool = True
         is_search: bool = False
+        is_clear_history: bool = False,
         device_id: int = 0
 
     @router.post("/call_openai_chat/")
@@ -31,6 +32,9 @@ class OpenAiGPTRouter():
         tmp_history = OpenAiGPTRouter.history
         if(item.is_correlation == False):
             tmp_history = OpenAiGPTRouter.history[-1]
+        if(item.is_clear_history == True):
+            # clear chat history
+            OpenAiGPTRouter.history.clear()
         print(tmp_history)
         if(item.is_search == False):
                 return OpenAiEngine.call_openai_chat(tmp_history, item.engine, item.temperature, item.top_p, item.max_tokens)

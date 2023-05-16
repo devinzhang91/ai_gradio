@@ -19,8 +19,10 @@ def check_response(response):
     # 检查响应
     if response.status_code == 200:
         print(f'请求成功, json: {response.text}')
+        return response.text
     else:
         print(f'请求失败，状态码：{response.status_code}, json: {response.text}')
+        return response.status_code
 
 
 data = {
@@ -28,9 +30,10 @@ data = {
     "engine": chatbot_engine_list[0],
     "temperature": 0.1,
     "top_p": 0.5,
-    "max_tokens": 100,
+    "max_tokens": 256,
     "is_correlation": True,
     "is_search": False,
+    "is_clear_history": False,
     "device_id": 0
 }
 
@@ -44,7 +47,7 @@ response = requests.post(url, json=data)
 check_response(response)
 
 # 清除对话历史
-response = requests.post(url, json=data)
+response = requests.post(clear_url, json=data)
 
 # 新的对话， 第一次对话
 data['prompt'] = "什么是增程式混合动力汽车?"

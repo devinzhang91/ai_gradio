@@ -31,6 +31,6 @@ response = requests.post(url, data=stream)
 
 # 检查响应
 if response.status_code == 200:
-    print(f'文件上传成功, json: {response.text}')
+    print(f'文件上传成功, asr: {response.text}')
 else:
-    print(f'文件上传失败，状态码：{response.status_code}, json: {response.text}')
+    print(f'文件上传失败，状态码：{response.status_code}, asr: {response.text}')

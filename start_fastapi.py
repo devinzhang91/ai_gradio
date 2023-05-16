@@ -11,6 +11,7 @@ from src.webui.speech_webui import SpeechWebUI
 from src.routers.azure_speech_router import AzureSpeechRouter
 from src.routers.search_router import SearchRouter
 from src.routers.openai_gpt_router import OpenAiGPTRouter
+from src.routers.speech_chatbot_router import SpeechChatBotRouter
 
 import uvicorn
 from fastapi import FastAPI
@@ -24,6 +25,7 @@ app = FastAPI()
 app.include_router(AzureSpeechRouter.router)
 app.include_router(SearchRouter.router)
 app.include_router(OpenAiGPTRouter.router)
+app.include_router(SpeechChatBotRouter.router)
 
 @app.get("/help")
 def help():
